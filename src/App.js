@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import Shape from "./components/Shape";
+import State from "./components/Prototypes/State";
+import MassAnimation from "./components/Prototypes/MassAnimation";
+import Tetris from "./components/Tetris";
+import "./style/style.css";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {/* <div className="scene">
+        <div>
+          <Shape
+            cubes={[
+              { x: 0, y: 0, z: 0 },
+              { x: 1, y: 0, z: 0 },
+            ]}
+          />
+        </div>
+      </div> */}
+      {/* <MassAnimation /> */}
+      <Tetris />
+    </>
   );
-}
+};
 
 export default App;

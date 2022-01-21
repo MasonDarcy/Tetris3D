@@ -1,0 +1,163 @@
+:root {
+  --height: 5vmin;
+  --width: 5vmin;
+  --depth: 5vmin;
+  --animation-speed: 3s;
+  --num: 1;
+  --matrix: matrix(1, 0, 0, 1, 0.0117448, 0);
+  --x-rotation: -24;
+  --y-rotation: -24;
+  --floor-offset: -5.5;
+  --initial-piece-offset: 3;
+  --transformX: 4;
+  --transformY: 4;
+}
+
+.scene {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.camera {
+  position: absolute;
+  transform-style: preserve-3d;
+  height: calc(var(--height) * 10);
+  width: calc(var(--width) * 10);
+  transform: rotateX(calc(var(--x-rotation, -25) * 1deg))
+    rotateY(calc(var(--y-rotation, -25) * 1deg)) rotateX(90deg);
+}
+
+/*Transformation class*/
+.rotationParent {
+  position: absolute;
+  transform-style: preserve-3d;
+  outline: 1px solid transparent;
+}
+
+.horizontalParent {
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: translateX(calc(var(--transformX) * 5vmin))
+    translateY(calc(var(--transformY) * 5vmin));
+}
+
+.verticalParent {
+  position: absolute;
+  transform-style: preserve-3d;
+  /* height: 100px;
+  width: 100px;
+  background-color: blue; */
+}
+
+/*Create a floor that shapes are falling onto.*/
+.floor {
+  position: absolute;
+  transform-style: preserve-3d;
+  height: calc(var(--height) * 10);
+  width: calc(var(--width) * 10);
+  background-color: rgb(154, 183, 246);
+  transform: translateZ(calc(var(--height) * var(--floor-offset)));
+}
+/* transform: translateZ(calc(var(--height) * var(--floor-offset))); */
+
+/* transform: rotateX(calc(var(--x-rotation, -25) * 1deg))
+rotateY(calc(var(--y-rotation, -25) * 1deg)) rotateX(90deg)
+translateZ(calc(var(--height) * var(--floor-offset))); */
+
+/*Parent of the cubes, for rotations?*/
+.shape {
+  position: absolute;
+  background-color: rgb(206, 17, 190);
+  transform-style: preserve-3d;
+  height: calc(var(--height) * 1);
+  width: calc(var(--width) * 1);
+  transform: translateZ(calc(var(--height) * 5));
+}
+
+.cubeParent {
+  position: absolute;
+  /* background-color: royalblue; */
+  transform-style: preserve-3d;
+  height: calc(var(--height));
+  width: calc(var(--width));
+}
+
+.cubeParent > div {
+  position: absolute;
+  height: var(--height);
+  width: var(--width);
+  opacity: 1;
+}
+.front {
+  background-color: rgb(194, 86, 236);
+  transform: rotateX(90deg) translateZ(calc(var(--depth) / 2 * -1));
+}
+
+.back {
+  background-color: rgb(77, 158, 195);
+  transform: rotateX(90deg) translateZ(calc(var(--depth) / 2 * 1));
+}
+
+.right {
+  background-color: rgb(136, 8, 29);
+  transform: rotateX(90deg) rotateY(90deg)
+    translateZ(calc(var(--depth) / 2 * 1));
+}
+
+.left {
+  background-color: rgb(194, 107, 49);
+  transform: rotateX(90deg) rotateY(90deg)
+    translateZ(calc(var(--depth) / 2 * -1));
+}
+
+.top {
+  background-color: rgb(35, 195, 69);
+  transform: translateZ(calc(var(--depth) / 2 * 1));
+}
+
+.bottom {
+  background-color: rgb(35, 195, 69);
+  transform: translateZ(calc(var(--depth) / 2 * -1));
+}
+
+.directParent {
+  transform-style: preserve-3d;
+  height: calc(var(--height) * 2);
+  width: calc(var(--width) * 2);
+  background-color: rgb(69, 199, 97);
+}
+
+.part {
+  position: absolute;
+  transform-style: preserve-3d;
+  height: var(--height);
+  width: var(--width);
+  background-color: orange;
+}
+
+.protoPart {
+  position: absolute;
+  transform-style: preserve-3d;
+  height: var(--height);
+  width: var(--width);
+  background-color: orange;
+}
+
+.moveRight {
+  animation-name: moveRight;
+  animation-duration: var(--animation-speed);
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes moveRight {
+  100% {
+    transform: translate(calc(var(--num) * 50%), 0%);
+  }
+}
