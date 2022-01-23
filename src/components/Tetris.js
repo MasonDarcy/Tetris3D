@@ -5,7 +5,9 @@ import Cube from "./Cube";
 import Floor from "./Floor";
 import { rotationUtil } from "../helpers/rotationUtil";
 import { modelUtil } from "../helpers/modelUtil";
-import { collision } from "../helpers/collisionUtil";
+import { collisionUtil } from "../helpers/collisionUtil";
+import {getRandomShape} from "../helpers/shapeMaker"
+import { v4 as uuidv4 } from 'uuid';
 
 const Tetris = () => {
   /*Default starting position of the root contextShape cube*/
@@ -28,18 +30,21 @@ const Tetris = () => {
   /*Collection of [<Cube/> refs, position] tuple objects for animating.*/
   const refData = useRef([]);
   /*-------------------------------------------------------------------*/
+    /*Lever to control user input.*/
+    const inputLever = useRef(true);
+    /*-------------------------------------------------------------------*/
   /*Context shape and its transform refs.------------------------------*/
 
-  let [cubeCoords, setCubeCoords] = useState({
-    coords: [
-      [0, 0, 0],
-      [-1, 0, 0],
-      [1, 0, 0],
-      [1, 1, 0],
-    ],
-    colors: ["orange", "blue", "red", "green", "pink", "yellow"],
-  });
+ let [cubeCoords, setCubeCoords] = useState(getRandomShape());
+  let cordRef = useRef(JSON.parse(JSON.stringify(cubeCoords)));
 
+  // {
+  //   coords: [[0, 0, 0],
+  //   [-1, 0, 0],
+  //   [1, 0, 0],
+  //   [1, 1, 0]],
+  //   colors: ["orange", "blue", "red", "green", "pink", "yellow"]
+  // }
   let rotationRef = useRef(null);
   let horizontalRef = useRef(null);
   let verticalRef = useRef(null);
@@ -74,99 +79,200 @@ const Tetris = () => {
   };
 
   const keydown = (e) => {
-    console.log(e.keyCode);
+  
     e.preventDefault();
+    let rotatedCoords;
+    if(inputLever.current) {
     //Codes for rotation //w 87 //a 65 //s 83 //d 68
     switch (e.keyCode) {
       case 37:
         //horizontal left
+        //co-ordinates to be?
+        if(!collisionUtil.collision(cubeCoords.coords, model, x.current - 1, y.current , z.current)) {
         horizontalRef.current.style.setProperty(`--transformX`, x.current - 1);
         x.current = x.current - 1;
-        //co-ordinates to be?
-        console.log(cubeCoords.coords);
-
-        // let collided = collisionUtil.collision();
+        }
         break;
       case 38:
         //up
+        if(!collisionUtil.collision(cubeCoords.coords, model, x.current, y.current - 1, z.current)) {
+
         horizontalRef.current.style.setProperty(`--transformY`, y.current - 1);
         y.current = y.current - 1;
+        }
         break;
       case 39:
         //right
+
+        if(!collisionUtil.collision(cubeCoords.coords, model, x.current + 1, y.current, z.current)) {
+
         horizontalRef.current.style.setProperty(`--transformX`, x.current + 1);
         x.current = x.current + 1;
+        }
         break;
       case 40:
         //down
+        if(!collisionUtil.collision(cubeCoords.coords, model, x.current, y.current + 1, z.current)) {
+
         horizontalRef.current.style.setProperty(`--transformY`, y.current + 1);
         y.current = y.current + 1;
-
+        }
         break;
       case 83:
         //s
         //TODO check for collisions
-        setCubeCoords({
-          coords: rotationUtil.rotate(cubeCoords.coords, 1),
-          colors: rotationUtil.rotateX90(cubeCoords.colors),
-        });
+        //rotatedCoords = rotationUtil.rotate(cubeCoords.coords, 1);
+        rotatedCoords = rotationUtil.rotate(cordRef.current.coords, 1);
+
+        if(!collisionUtil.collision(rotatedCoords, model, x.current, y.current, z.current)) {
+          setCubeCoords({
+            coords: rotatedCoords,
+            colors: rotationUtil.rotateX90(cubeCoords.colors),
+          });
+
+          cordRef.current.coords = rotatedCoords;
+          cordRef.current.colors = rotationUtil.rotateX90(cordRef.current.colors);
+
+        }
         break;
       case 87:
         //w
         //TODO check for collisions
-        setCubeCoords({
-          coords: rotationUtil.rotate(cubeCoords.coords, 2),
-          colors: rotationUtil.rotateXNeg90(cubeCoords.colors),
-        });
+      //  rotatedCoords = rotationUtil.rotate(cubeCoords.coords, 2);
+        rotatedCoords = rotationUtil.rotate(cordRef.current.coords, 2);
+
+        if(!collisionUtil.collision(rotatedCoords, model, x.current, y.current, z.current)) {
+          setCubeCoords({
+            coords: rotatedCoords,
+            colors: rotationUtil.rotateXNeg90(cubeCoords.colors),
+          });
+          cordRef.current.coords = rotatedCoords;
+          cordRef.current.colors = rotationUtil.rotateXNeg90(cordRef.current.colors);
+        
+        }
         break;
       case 65:
         //a
         //TODO check for collisions
-        setCubeCoords({
-          coords: rotationUtil.rotate(cubeCoords.coords, 3),
-          colors: rotationUtil.rotateY90(cubeCoords.colors),
-        });
+     //   rotatedCoords = rotationUtil.rotate(cubeCoords.coords, 3);
+        rotatedCoords = rotationUtil.rotate(cordRef.current.coords, 3);
+
+        if(!collisionUtil.collision(rotatedCoords, model, x.current, y.current, z.current)) {
+          setCubeCoords({
+            coords: rotatedCoords,
+            colors: rotationUtil.rotateY90(cubeCoords.colors),
+          });
+          cordRef.current.coords = rotatedCoords;
+          cordRef.current.colors = rotationUtil.rotateY90(cordRef.current.colors);
+        }
+       
         break;
       case 68:
         //d
         //TODO check for collisions
-        setCubeCoords({
-          coords: rotationUtil.rotate(cubeCoords.coords, 4),
-          colors: rotationUtil.rotateYNeg90(cubeCoords.colors),
-        });
+      //  rotatedCoords = rotationUtil.rotate(cubeCoords.coords, 4);
+
+        rotatedCoords = rotationUtil.rotate(cordRef.current.coords, 4);
+
+        if(!collisionUtil.collision(rotatedCoords, model, x.current, y.current, z.current)) {
+          setCubeCoords({
+            coords: rotatedCoords,
+            colors: rotationUtil.rotateYNeg90(cubeCoords.colors),
+          });
+          cordRef.current.coords = rotatedCoords;
+          cordRef.current.colors = rotationUtil.rotateYNeg90(cordRef.current.colors);
+        }
         break;
       case 72:
         //h
         fall();
         break;
     }
+  }
     //w 87 //a 65 //s 83 //d 68
   };
   /*--------------------------------------------------------------------*/
 
   const fall = () => {
+    
     let keyframes = [
       { transform: `translateZ(-${z.current * 5}vmin)` },
       { transform: `translateZ(-${(z.current + 1) * 5}vmin)` },
     ];
-    console.log(keyframes);
+
     let timing = {
-      duration: 2000,
+      duration: 1000,
       iterations: 1,
       fill: "forwards",
     };
 
     let animation = verticalRef.current.animate(keyframes, timing);
-    z.current = z.current + 1;
-    console.log(`z: ${z.current}`);
-    console.log(`x: ${x.current}`);
-    console.log(`y: ${y.current}`);
 
-    if (z.current < 10) {
+
+/*Disable input here, otherwise the user has a brief window to rotate
+the shape after a collision has been detected.*/
+inputLever.current = false;
+let collision = collisionUtil.collision(cordRef.current.coords, model, x.current, y.current, z.current + 1);
+
+
+    if (!collision) {
+      inputLever.current = true;
+      z.current = z.current + 1;
       animation.onfinish = fall;
+    } else {
+      /*this resolves a discrepancy in the color if the user is mashing rotations */
+      setCubeCoords(cordRef.current);
+      /*--------------------------------------------------------------------------*/
+      animation.onfinish = () => {
+        //remove context shape
+        setCubeCoords( {
+          coords: [
+          ],
+          colors: [],
+        });
+   
+        //Create new model object
+        let mod = JSON.parse(JSON.stringify(model));
+        console.log(cordRef.current.colors);
+      //add block representation to existingShapes, update model
+      let rootCoords = collisionUtil.getMutatedCoords(cordRef.current.coords, x.current, y.current, z.current + 1);
+  
+      let newShapes = [];
+      rootCoords.forEach((coord) => {
+        mod[coord[0]][coord[1]][coord[2]] = true; 
+        newShapes.push({shape: <Shape key ={uuidv4()} cubes={{
+          coords: [coord],
+          colors: cordRef.current.colors,
+        }}/>, coords: [coord]})
+      });
+
+      //Set existing shape
+      setModel(mod);
+      setExistingShapes((old) => {
+        return [...old, ...newShapes]
+      });
+      
+      x.current = START_X;
+      y.current = START_Y;
+      z.current = START_Z;
+      
+      cordRef.current = getRandomShape();
+      setCubeCoords(JSON.parse(JSON.stringify(cordRef.current)));
+      horizontalRef.current.style.setProperty(`--transformX`, x.current);
+      horizontalRef.current.style.setProperty(`--transformY`, y.current);
+
+
+      fall();
+
+      }
     }
   };
 
+
+  useEffect(() => {
+
+
+  }, [cubeCoords])
   useEffect(() => {
     window.addEventListener("mousemove", mouseMove);
     window.addEventListener("keydown", keydown);
@@ -188,12 +294,13 @@ const Tetris = () => {
           <div className="rotationParent" ref={rotationRef}>
             <div className="horizontalParent" ref={horizontalRef}>
               <div className="verticalParent" ref={verticalRef}>
-                <Shape cubes={cubeCoords} />
+                
+                {cubeCoords ? <Shape  cubes={cubeCoords} /> : null}
               </div>
             </div>
           </div>
           {existingShapes.map((shape) => {
-            return shape;
+            return shape.shape;
           })}
           <Floor />
         </div>

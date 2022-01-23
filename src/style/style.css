@@ -73,7 +73,7 @@ translateZ(calc(var(--height) * var(--floor-offset))); */
 /*Parent of the cubes, for rotations?*/
 .shape {
   position: absolute;
-  background-color: rgb(206, 17, 190);
+  /* background-color: rgb(206, 17, 190); */
   transform-style: preserve-3d;
   height: calc(var(--height) * 1);
   width: calc(var(--width) * 1);
